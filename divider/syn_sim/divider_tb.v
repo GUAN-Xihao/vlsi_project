@@ -16,7 +16,7 @@ module divider_tb;
 // ----------------------------------
 // Local parameter declaration
 // ----------------------------------
-localparam CLK_PERIOD = 5.0;  // clock period: 5ns
+localparam CLK_PERIOD = 30.0;  // clock period: 30ns
 
 // ----------------------------------
 // Interface of the divider module
@@ -47,7 +47,7 @@ divider uut (
 // should backannotate the SDF file
 // ----------------------------------
 initial begin
-  $sdf_annotate("divider.mapped.sdf", uut);
+  $sdf_annotate("../syn/result/divider.mapped.sdf", uut);
 end
 
 // ----------------------------------
@@ -68,7 +68,8 @@ initial begin
   start       = 1'b0;
   dividend    = 32'd0;
   divisor     = 32'd0;
-  #(2*CLK_PERIOD) rst = 1'b0;
+  #(2*CLK_PERIOD);
+  @(posedge clk) rst = 1'b0;
 
   // Input stimulus 1: 10/7
   @(negedge clk);

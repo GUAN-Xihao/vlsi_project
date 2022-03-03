@@ -14,11 +14,11 @@
 # Step 0: design import
 ################################################################################
 # Synthesized verilog netlist from Design Compiler
-set init_verilog "designs/divider.mapped.v"
+set init_verilog "../syn/results/divider.mapped.v"
 # MMC script: corner settings of PDK library
 set init_mmmc_file "scripts/mmc2.view"
 # LEF file import: abstract view of layout
-set init_lef_file "/mnt/hgfs/PDK/NangateOpenCellLibrary_PDKv1_3_v2010_12/Back_End/lef/NangateOpenCellLibrary.tech.lef /mnt/hgfs/PDK/NangateOpenCellLibrary_PDKv1_3_v2010_12/Back_End/lef/NangateOpenCellLibrary.macro.lef"
+set init_lef_file "/afs/ee.ust.hk/staff/ee/dept/public/elec516/eesm_5020_2017spring/eesm_5020/lib/NangateOpenCellLibrary_PDKv1_3_v2010_12/Back_End/lef/NangateOpenCellLibrary.tech.lef /afs/ee.ust.hk/staff/ee/dept/public/elec516/eesm_5020_2017spring/eesm_5020/lib/NangateOpenCellLibrary_PDKv1_3_v2010_12/Back_End/lef/NangateOpenCellLibrary.macro.lef"
 # Power and ground net name
 set init_pwr_net VDD
 set init_gnd_net VSS
@@ -105,18 +105,34 @@ saveDesign db/divider_place.enc
 # Step 4. Clock tree synthesize (CTS)
 # Generate the clock tree specification. Optimize the design at the CTS phase.
 ################################################################################
-# Create clock tree specfication file: "Clock.ctstch"
-# The clock tree buffer includes 3 buffers: CLKBUF_X1, CLKBUF_X2, CLKBUF_X3
-# The clock tree buffer is PDK-dependent
-createClockTreeSpec -bufferList {CLKBUF_X1 CLKBUF_X2 CLKBUF_X3} -file \
-                    Clock.ctstch
 
-# Set CTS engine: ck
-setCTSMode -engine ck
+# CTS Engine in Innovus CCOpt
+setCTSMode -engine ccopt
+
+# Create clock tree specfication
+set_ccopt_property buffer_cells "CLKBUF_X1 CLKBUF_X2 CLKBUF_X3"
+set_ccopt_property use_inverters auto
+
+# Config CTS Engine
+setCCOptMode -cts_opt_type full
+create_ccopt_clock_tree_spec
 
 # Perform CTS
-clockDesign -specFile Clock.ctstch -outDir clock_report -fixedInstBeforeCTS \
-            -updateIoLatency
+ccopt_design
+
+# # Set CTS engine: ck
+# setCTSMode -engine ck
+
+# # Create clock tree specfication file: "Clock.ctstch"
+# # The clock tree buffer includes 3 buffers: CLKBUF_X1, CLKBUF_X2, CLKBUF_X3
+# # The clock tree buffer is PDK-dependent
+# createClockTreeSpec -bufferList {CLKBUF_X1 CLKBUF_X2 CLKBUF_X3} -file \
+#                     Clock.ctstch
+
+
+# # Perform CTS
+# clockDesign -specFile Clock.ctstch -outDir clock_report -fixedInstBeforeCTS \
+#             -updateIoLatency
 
 # Run post-CTS optimization
 setAnalysisMode -analysisType onChipVariation
@@ -163,10 +179,10 @@ optDesign -postRoute -hold -outDir "reports/postRouteTimingReports"
 # ------------------------------------------------------------------------------
 # With QRC license and QRC installed
 # Make sure the Cadence EXT (i.e. QRC) is installed
-# On UST server: source /usr/eelocal/cadence/ext142/.cshrc
+# On UST server: source /usr/eelocal/cadence/ext191/.cshrc
 # ------------------------------------------------------------------------------
 setDelayCalMode -SIAware false
-setDelayCalMode -engine signalStorm
+setDelayCalMode -engine AAE
 timeDesign -signoff -si -outDir "reports/signoffTimingReports"
 timeDesign -signoff -si -hold -outDir "reports/signoffTimingReports"
 
@@ -214,5 +230,5 @@ saveNetlist results/divider.routed.v
 
 # *.gds: GDS file
 streamOut results/divider.gds -mapFile streamOut.map \
-          -merge {/mnt/hgfs/PDK/NangateOpenCellLibrary_PDKv1_3_v2010_12/Back_End/gds/NangateOpenCellLibrary.gds} \
-          -stripes 1 -units 2000 -mode ALL
+          -merge {/afs/ee.ust.hk/staff/ee/dept/public/elec516/eesm_5020_2017spring/eesm_5020/lib/NangateOpenCellLibrary_PDKv1_3_v2010_12/Back_End/gds/NangateOpenCellLibrary.gds} \
+          -stripes 1 -units 10000 -mode ALL

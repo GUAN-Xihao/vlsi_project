@@ -16,7 +16,7 @@ module divider_tb;
 // ----------------------------------
 // Local parameter declaration
 // ----------------------------------
-localparam CLK_PERIOD = 5.0;  // clock period: 5ns
+localparam CLK_PERIOD = 30.0;  // clock period: 5ns
 
 // ----------------------------------
 // Interface of the divider module
@@ -47,7 +47,7 @@ divider uut (
 // should backannotate the SDF file
 // ----------------------------------
 initial begin
-  $sdf_annotate("divider.sdf", uut);
+  $sdf_annotate("../layout/results/divider.sdf", uut);
 end
 
 // ----------------------------------
