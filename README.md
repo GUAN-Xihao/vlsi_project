@@ -49,21 +49,22 @@ In order to launch the software properly, we should activate the running
 environment for each software on our server. The software can be enabled on UST
 server as follows:
 - Synopsys VCS: 
-  > source /usr/eelocal/synopsys/vcs_mx-vi2014.03-2/.cshrc
+  > source /usr/eelocal/synopsys/vcs-vq2020.03-sp1-1/.cshrc
 - Synopsys Design Compiler:
-  > source /usr/eelocal/synopsys/syn-vi2013.12-sp5-5/.cshrc
-- Cadence Encounter Digital Implementation:
-  > source /usr/eelocal/cadence/edi142/.cshrc
-
-You can also append all these settings to your local `.cshrc` file so that you do
+  > source /usr/eelocal/synopsys/syn-vp2019.03-sp5/.cshrc
+- Cadence Innovus Digital Implementation:
+  > source /usr/eelocal/cadence/innovus201/.cshrc
+- Cadence Quantus Extraction Solution:
+  > source /usr/eelocal/cadence/ext191/.cshrc
+You can also append all these settings to your local `.cshrc_user` file so that you do
 not need to type it each time when you log in your system. Concretely, type the
 following shell commands in the terminal:
 
 ```sh
-echo "source /usr/eelocal/synopsys/vcs_mx-vi2014.03-2/.cshrc" >> ~/.cshrc
-echo "source /usr/eelocal/synopsys/syn-vi2013.12-sp5-5/.cshrc" >> ~/.cshrc
-echo "source /usr/eelocal/cadence/edi142/.cshrc" >> ~/.cshrc
-
+echo "source /usr/eelocal/synopsys/vcs-vq2020.03-sp1-1/.cshrc" >> ~/.cshrc_user
+echo "source /usr/eelocal/synopsys/syn-vp2019.03-sp5/.cshrc" >> ~/.cshrc_user
+echo "source /usr/eelocal/cadence/innovus201/.cshrc" >> ~/.cshrc_user
+echo "source /usr/eelocal/cadence/ext191/.cshrc" >> ~/.cshrc_user
 ```
 
 ## Step 1: RTL design
@@ -146,11 +147,11 @@ or UMC 45nm.
 
 Before you run the synthesis for the divider, you must modify the TCL script
 `run.tcl`, which defines the library path to the Nangate FreePDK 45nm. More
-specifically, the standard cell library is stored on the following path in my
-system:
+specifically, the standard cell library is stored on the following path in the
+UST servers system:
 
 ```sh
-/mnt/hgfs/PDK/NangateOpenCellLibrary_PDKv1_3_v2010_12/
+/afs/ee.ust.hk/staff/ee/dept/public/elec516/eesm_5020_2017spring/eesm_5020/lib/NangateOpenCellLibrary_PDKv1_3_v2010_12
 ```
 
 As a result, the `search_path` includes that directory. You have to modify the
@@ -181,19 +182,21 @@ gate-level netlist.
 
 ### Step 4. Post-synthesis simulation
 The gate-level simulation of post-synthesis should be conducted under `post_syn`
-directory. In this step, you should first copy the synthesized results from Step
+directory. In this step, the scripts will referenced the synthesized results from Step
 3. More specifically, the netlist (\*.mapped.v) and the delay file (\*.sdf) are
-needed to be copied from `syn` directory to the current directory. A sampled
-synthesized netlist and delay file are already included in this folder in case
+used in this step. A sampled
+synthesized netlist and delay file are already included in `sample` directory in case
 you fail to write the HDL design of the divider or do the synthesis. You should
 replace the sampled files with your synthesized results here. In addition, a
 modified testbench `divider_tb.v` is also included in this directory. The
 testbench contains the additional SDF back-annotation part as follows:
 
 ```verilog
+`ifdef SDF_FILE
 initial begin
-  $sdf_annotate("your_sdf_filename.sdf", your_instantiate_module);
+  $sdf_annotate(`SDF_FILE, uut);
 end
+`endif
 ```
 
 Similar to the behavior simulation in Step 2, 2 handy shell scripts are provided
@@ -221,6 +224,7 @@ LEON processor is placed and routed. The design flow is similar to the steps
 provided by the official workshop. The main differences of P&R with the official
 workshop are listed as follows:
 
+- We use new CTS engine, which is Innovus CCOpt, instead of the ck engine in the offical workshop.
 - Standard cell library: EDI official workshop uses Cadence FreePDK 45nm. In the
   sampled project, we are using Nangate FreePDK 45nm. You can also pick any
 commercial standard cell library.
@@ -233,13 +237,13 @@ recommended to go through the floorplan section of the official workshop to
 understand the role of floorplan for the complex VLSI chip design.
 
 The first step is to import the synthesised netlist into `layout` directory. This is done
-in the script `mmc.view` located at directory `scripts`. A sampled 
-`mmc.view` is included in `scripts`
+in the script `mmc2.view` located at directory `scripts`. A sampled 
+`mmc2.view` is included in `scripts`
 directory for your reference. As before, the file path of Nangate FreePDK should
-be varied on your system. You should modify the content of `mmc.view` to cater
+be varied on your system. You should modify the content of `mmc2.view` to cater
 for your system settings. It is recommended to understand how we define the
 fast corner for hold time analysis and the slow corner for setup time analysis
-in `mmc.view`. Generally speaking, the fast corner includes the fast corner
+in `mmc2.view`. Generally speaking, the fast corner includes the fast corner
 timing library (\*.lib), fast corner RC library (\*.capTbl), and different
 scaling factors for RC extraction. In addition, the abstract view of standard
 cell layout (\*.lef) needs to be specified during the design import. You can

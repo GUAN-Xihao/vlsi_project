@@ -43,8 +43,21 @@ divider uut (
 );
 
 // ----------------------------------
+// For gate-level and post-layout 
+// simulation, we should backannotate 
+// the SDF file defined in SDF_FILE
+// ----------------------------------
+
+`ifdef SDF_FILE
+initial begin
+  $sdf_annotate(`SDF_FILE, uut);
+end
+`endif
+
+// ----------------------------------
 // Clock generation
 // ----------------------------------
+
 initial begin
   clk = 1'b0;
   forever #(CLK_PERIOD/2.0) clk = ~clk;

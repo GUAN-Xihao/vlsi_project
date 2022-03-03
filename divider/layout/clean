@@ -6,3 +6,8 @@ rm -f *.map *.mtarpt *.ctstch
 rm -fr celtic extLogDir .cadence
 rm -f qrc_*_*.log
 rm -f rc_model.bin
+rm -f .timing_file_*.gz
+
+# Design Dependent
+rm divider
+rm -rf divider.dat
