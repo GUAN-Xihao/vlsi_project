@@ -216,6 +216,12 @@ report_area -out_file reports/divider.routed.area.rpt
 # Power report
 report_power -outfile reports/divider.routed.power.rpt
 
+# Setup Timing Report
+report_timing -machine_readable -max_paths 100 -max_slack 100.0 -min_slack -100.0 -late > divider_setup.mtarpt
+
+# Hold Timing Report
+report_timing -machine_readable -max_paths 100 -max_slack 100.0 -min_slack -100.0 -early > divider_hold.mtarpt
+
 # ------------------------------------------------------------------------------
 # Step 7b. Exports the design
 # ------------------------------------------------------------------------------
