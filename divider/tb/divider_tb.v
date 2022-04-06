@@ -119,7 +119,16 @@ initial begin
   wait(done == 1'b1); #(CLK_PERIOD*2);
   $finish;
 end
-
+  
+// ----------------------------------
+// Time Limit
+// ----------------------------------
+initial begin
+  #1000000 
+  $display("Reach time limit, force stop.");
+  $finish;
+end
+  
 // ----------------------------------
 // Output monitor
 // ----------------------------------
