@@ -14,12 +14,12 @@
 create_clock -period 5.0 [get_ports clk]
 
 # Input delay and output delay
-set_input_delay -max 1.0 -clock clk \
+set_input_delay -max 2.7 -clock clk \
   [remove_from_collection [all_inputs] [get_ports clk]]
-set_output_delay -max 1.0 -clock clk [all_outputs]
-set_input_delay -min 1.0 -clock clk \
+set_output_delay -max 0.8 -clock clk [all_outputs]
+set_input_delay -min 2.3 -clock clk \
   [remove_from_collection [all_inputs] [get_ports clk]]
-set_output_delay -min 1.0 -clock clk [all_outputs]
+set_output_delay -min 1.2 -clock clk [all_outputs]
 ################################################################################
 # Enviornement attribute constraint
 ################################################################################
