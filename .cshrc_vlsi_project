@@ -1,0 +1,4 @@
+source /usr/eelocal/synopsys/vcs-vq2020.03-sp1-1/.cshrc
+source /usr/eelocal/synopsys/syn-vp2019.03-sp5/.cshrc
+source /usr/eelocal/cadence/innovus201/.cshrc
+source /usr/eelocal/cadence/ext191/.cshrc
